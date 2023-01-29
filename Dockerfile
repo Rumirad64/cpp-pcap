@@ -10,10 +10,10 @@ COPY makefile .
 
 # Install the build essentials package
 RUN apt-get update && apt-get install -y build-essential
-RUN sudo apt-get install libpcap-dev
+RUN apt-get -y install libpcap-dev
 
 # Compile the C++ source code
 RUN make
 
 # Run the C++ app when the container is launched
-CMD ["./inde.exe"]
+CMD ["./index.exe"]
