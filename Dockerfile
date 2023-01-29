@@ -16,4 +16,4 @@ RUN sudo apt-get install libpcap-dev
 RUN make
 
 # Run the C++ app when the container is launched
-CMD ["./index"]
+CMD ["./inde.exe"]

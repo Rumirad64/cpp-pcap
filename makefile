@@ -1,9 +1,9 @@
 CC=g++
-CFLAGS=-c -Wall -lpcap
+CFLAGS=-c -Wall -lpcap -std=c++11
 LDFLAGS=
 SOURCES=index.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=index
+EXECUTABLE=index.exe
 
 all: $(SOURCES) $(EXECUTABLE)
 

@@ -1,12 +1,18 @@
-#include <pcap.h>
 #include <iostream>
 using namespace std;
 
+#include <pcap.h>
 #include <arpa/inet.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
 #include <netinet/udp.h>
 #include <netinet/ip_icmp.h>
+#include <fstream>
+#include <string>
+
+const string FILENAME = "data.txt";
+std::ofstream file;
+
 
 void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data) {
   struct ip *ip_hdr = (struct ip *)(pkt_data + 14);
@@ -28,17 +34,33 @@ void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_cha
     std::cout << "  Protocol: TCP" << std::endl;
     std::cout << "  Source Port: " << ntohs(src_port) << std::endl;
     std::cout << "  Destination Port: " << ntohs(dst_port) << std::endl;
+    file << "TCP" << " \tSource IP: " << inet_ntoa(src_ip) << " \t\t\t\t\t\tDestination IP: " << inet_ntoa(dst_ip) << " \t\t\t Source Port: " << ntohs(src_port) << " \t\t\t\t Destination Port: " << ntohs(dst_port) << std::endl;
   } else if (ip_hdr->ip_p == IPPROTO_ICMP) {
     /* handle ICMP packet */
     struct icmphdr *icmp_hdr = (struct icmphdr *)(pkt_data + 14 + (ip_hdr->ip_hl * 4));
     std::cout << "  Protocol: ICMP" << std::endl;
     std::cout << "  ICMP Type: " << (int)icmp_hdr->type << std::endl;
     std::cout << "  ICMP Code: " << (int)icmp_hdr->code << std::endl;
-  } else {
+  } 
+  else if (ip_hdr->ip_p == IPPROTO_UDP) {
+    /* handle UDP packet */
+    struct udphdr *udp_hdr = (struct udphdr *)(pkt_data + 14 + (ip_hdr->ip_hl * 4));
+    u_short src_port = udp_hdr->uh_sport;
+    u_short dst_port = udp_hdr->uh_dport;
+
+    std::cout << "  Protocol: UDP" << std::endl;
+    std::cout << "  Source Port: " << ntohs(src_port) << std::endl;
+    std::cout << "  Destination Port: " << ntohs(dst_port) << std::endl;
+    file << "UDP" << " \tSource IP: " << inet_ntoa(src_ip) << " \t\t\t\t\t\tDestination IP: " << inet_ntoa(dst_ip) << " \t\t\t Source Port: " << ntohs(src_port) << " \t\t\t\t Destination Port: " << ntohs(dst_port) << std::endl;
+
+  }
+  else {
     /* handle other protocols */
     std::cout << "  Protocol: Other" << std::endl;
   }
 }
+
+// base code
 
 // void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data) {
 //   /* extract the source and destination IP addresses */
@@ -59,6 +81,8 @@ void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_cha
 // }
 
 int main(int argc, char *argv[]) {
+  file.open(FILENAME, std::ios::app); // open the file in append mode
+
   char *dev, errbuf[PCAP_ERRBUF_SIZE];
 
   /* get the first available device */
