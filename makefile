@@ -15,3 +15,14 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm -rf $(OBJECTS) $(EXECUTABLE)
+
+
+# add custom command called docker build
+docker-build:
+	docker build -t my-cplusplus-app .
+
+docker-run:
+	docker run -it --rm --name my-running-app my-cplusplus-app
+
+
+# Path: makefile
