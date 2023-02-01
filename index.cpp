@@ -162,6 +162,8 @@ int main(int argc, char *argv[])
   }
 
   /* open the device for capturing */
+  //pcap_t *pcap_open_live(const char *device, int snaplen, int promisc, int to_ms, char *errbuf)
+
   pcap_t *handle = pcap_open_live(dev, BUFSIZ, 1, 10, errbuf);
   if (handle == NULL)
   {
